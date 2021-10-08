@@ -28,6 +28,52 @@ route.post('/getall', (req,res) => {
     })
 })
 
+route.post('/most-updated', (req,res) => {
+    jwt.verify(req.body.token, req.body.secret, (err, token) => {
+        if(err){
+            res.json({ error: '[!] Wrong Authorization' }).status(301)
+        }else{
+            modelUsers.findAll({
+                where: {
+                    email: token.email,
+                    name: token.name
+                }
+            }).then(user => {
+                if(user.length != 0){
+                    modelBooks.findAll({
+                        order: sequelize.literal('title ASC')
+                    }).then(x => {
+                        res.json(x)
+                    })
+                }
+            })
+        }
+    })
+})
+
+route.post('/most-liked', (req,res) => {
+    jwt.verify(req.body.token, req.body.secret, (err, token) => {
+        if(err){
+            res.json({ error: '[!] Wrong Authorization' }).status(301)
+        }else{
+            modelUsers.findAll({
+                where: {
+                    email: token.email,
+                    name: token.name
+                }
+            }).then(user => {
+                if(user.length != 0){
+                    modelBooks.findAll({
+                        order: sequelize.literal('likes ASC')
+                    }).then(x => {
+                        res.json(x)
+                    })
+                }
+            })
+        }
+    })
+})
+
 route.post('/search', (req,res) => {
     jwt.verify(req.body.token, req.body.secret, (err, token) => {
         if(err){

@@ -28,16 +28,7 @@ export default class Login extends Component{
             phone: this.state.phone
         }).then(data => {
             if(data.status == 200){
-                axios.post(konfigurasi.server + 'auth/login', {
-                    email: this.state.email,
-                    password: this.state.password
-                }).then(res => {
-                    if(res.status == 200){
-                        this.props.navigation.dispatch(
-                            StackActions.replace('Home')
-                        )
-                    }
-                })
+                this.props.navigation.navigate('Login')
             }
         })
         this.setState({ loading: false })

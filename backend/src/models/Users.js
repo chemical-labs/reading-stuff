@@ -10,6 +10,10 @@ const User = sequelize.define('users', {
     email: DataTypes.TEXT,
     password: DataTypes.TEXT,
     phone: DataTypes.INTEGER,
+    photo: {
+        type: DataTypes.TEXT,
+        default: '/profile/defult.jpg'
+    },
     role: {
         type: DataTypes.TEXT,
         default: 'free'

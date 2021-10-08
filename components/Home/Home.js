@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { View, ScrollView, ImageBackground, TextInput, Text, Image, TouchableOpacity, AsyncStorage, StatusBar } from 'react-native'
+import { View, FlatList, ScrollView, ImageBackground, TextInput, Text, Image, TouchableOpacity, AsyncStorage, StatusBar } from 'react-native'
 import { StackActions } from '@react-navigation/native'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import Icons from 'react-native-vector-icons/Ionicons'
@@ -16,7 +16,6 @@ export default class Navigasi extends Component{
             }
         })
 
-        this.props.navigation.navigate('Books')
     }
     render(){
         let Tabs = createBottomTabNavigator();
@@ -60,9 +59,41 @@ export default class Navigasi extends Component{
 }
 
 class Discover extends Component{
+    constructor(props){
+        super(props)
+
+        this.state = {
+            books: []
+        }
+    }
+
+    componentDidMount(){
+        AsyncStorage.getItem('token').then(data => {
+            axios.post(konfigurasi.server + 'book/getall', {
+                token: data,
+                secret: konfigurasi.secret
+            }).then(res => {
+                this.setState({ books: this.state.books.concat(res.data) })
+            })
+        })
+    }
+
+    renderBooks = ({ item }) => {
+        return(
+            <TouchableOpacity style={{ padding: 28 }}>
+                <ImageBackground source={{ uri: konfigurasi.ssl + item.cover }} style={{ width: 100, height: 120, borderRadius: 10, overflow: 'hidden', flexDirection: 'row', justifyContent: 'flex-end', }}>
+                    <Text style={{ color: 'green', fontWeight: 'bold', marginRight: 10, marginTop: 5, }}>$</Text>
+                </ImageBackground>
+                <Text>{item.title}</Text>
+                { item.subscribe ? <Text style={{ fontWeight: 'bold', color: 'gold' }}>Premium</Text> : <Text></Text>}
+            </TouchableOpacity>
+
+        )
+    }
+
     render(){
         return(
-            <ScrollView contentContainerStyle={{ backgroundColor: 'white', flexGrow: 1, flexDirection: 'column' }}>
+            <View style={{ backgroundColor: 'white', flex: 1, flexDirection: 'column' }}>
                 <StatusBar hidden={true}/>
                 
                 <View style={{ padding: 15 }}>
@@ -70,15 +101,16 @@ class Discover extends Component{
                         <Text style={{ fontWeight: 'bold', fontSize: 17 }}>Discover Some Books !</Text>
                     </View>
 
-                    <TouchableOpacity style={{ width: 100, marginTop: 25 }}>
-                        <ImageBackground source={{ uri: 'https://66.media.tumblr.com/22163b02db5d4a89b7cbee0a086b0dcf/tumblr_n5l5si4Fzr1qkv54go1_1280.jpg' }} style={{ width: 100, height: 120, borderRadius: 10, overflow: 'hidden', flexDirection: 'row', justifyContent: 'flex-end', }}>
-                            <Text style={{ color: 'green', fontWeight: 'bold', marginRight: 10, marginTop: 5, }}>$</Text>
-                        </ImageBackground>
-                        <Text>Title Books</Text>
-                        <Text style={{ fontWeight: 'bold', color: 'gold' }}>Premium</Text>
-                    </TouchableOpacity>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 25 }}>
+                        <FlatList 
+                            data={this.state.books}
+                            numColumns={2}
+                            renderItem={this.renderBooks}
+                        />
+                    </View>
+
                 </View>
-            </ScrollView>
+            </View>
         )
     }
 }
@@ -182,7 +214,10 @@ class Home extends Component{
 
         this.state = {
             name: 'Civilions',
-            search: null
+            search: null,
+            updated: [],
+            liked: [],
+            profile: null
         }
     }
 
@@ -197,11 +232,36 @@ class Home extends Component{
                     name: x.name
                 })
             })
+
+            axios.post(konfigurasi.server + 'book/most-updated', {
+                token: data,
+                secret: konfigurasi.secret
+            }).then(res => {
+                this.setState({ updated: this.state.updated.concat(res.data) })
+            })
+
+            axios.post(konfigurasi.server + 'book/most-liked', {
+                token: data,
+                secret: konfigurasi.secret
+            }).then(res => {
+                this.setState({ liked: this.state.liked.concat(res.data) })
+            })
+
+            axios.post(konfigurasi.server + "auth/profile", {
+                token: data,
+                secret: konfigurasi.secret
+            }).then(res => {
+                this.setState({ profile: res.data[0].photo })
+            })
         })
     }
 
     search(){
         this.props.navigation.navigate('Search', { search: this.state.search })
+    }
+
+    books(title){
+        this.props.navigation.navigate('Overview', { title: title })
     }
 
     render(){
@@ -212,7 +272,7 @@ class Home extends Component{
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                     <View style={{ marginTop: 25, marginLeft: 20, flexDirection: 'row', alignItems: 'center' }}>
                         <TouchableOpacity onPress={() => this.props.navigation.navigate('Profile')}>
-                            <Image source={{ uri: "https://66.media.tumblr.com/6bedfc893119e2d7d446d37a81401219/tumblr_oretdiqVEU1rmk83fo1_500.jpg"}} style={{ width: 50, height: 50, borderRadius: 100, borderWidth: 2, borderColor: 'black' }} />
+                            {this.state.profile == null ? <Image source={{ uri: konfigurasi.server + 'profile/default.jpg' }} style={{ width: 50, height: 50, borderRadius: 100, borderWidth: 2, borderColor: 'black' }} /> : <Image source={{ uri: this.state.profile[0].photo }} style={{ width: 50, height: 50, borderRadius: 100, borderWidth: 2, borderColor: 'black' }} />}
                         </TouchableOpacity>
                         <View style={{ flexDirection: 'column', marginLeft: 15 }}>
                             <Text style={{ fontSize: 16, color: 'grey' }}>Wellcome Back</Text>
@@ -249,23 +309,30 @@ class Home extends Component{
                     <View style={{ flexDirection: 'column', marginTop: 25 }}>
                         <Text style={{ fontSize: 18, fontWeight: 'bold', alignItems: 'center' }}>Most Updated <Icons name="time-outline" size={20} /></Text>
                         <ScrollView horizontal={true} contentContainerStyle={{ marginTop: 7 }} showsHorizontalScrollIndicator={false}>
-                            <TouchableOpacity style={{ padding: 5 }}>
-                                <ImageBackground source={{ uri: 'https://66.media.tumblr.com/22163b02db5d4a89b7cbee0a086b0dcf/tumblr_n5l5si4Fzr1qkv54go1_1280.jpg' }} style={{ width: 100, height: 120, borderRadius: 10, overflow: 'hidden', flexDirection: 'row', justifyContent: 'flex-end', }}>
-                                    <Text style={{ color: 'green', fontWeight: 'bold', marginRight: 10, marginTop: 5, }}>$</Text>
-                                </ImageBackground>
-                            </TouchableOpacity>
+                            {this.state.updated.map((x, y) => {
+                                return <TouchableOpacity style={{ padding: 5 }}>
+                                    <ImageBackground source={{ uri: 'http://' + x.cover }} style={{ width: 100, height: 120, borderRadius: 10, overflow: 'hidden', flexDirection: 'row', justifyContent: 'flex-end', }}>
+                                        {x.subscribe ? 
+                                            <Text style={{ color: 'green', fontWeight: 'bold', marginRight: 10, marginTop: 5, }}>$</Text> : <View></View>}
+                                    </ImageBackground>
+                                </TouchableOpacity>
+                            })}
+
                        </ScrollView>
                     </View>
 
                     <View style={{ flexDirection: 'column', marginTop: 25 }}>
                         <Text style={{ fontSize: 18, fontWeight: 'bold', alignItems: 'center' }}>Most Liked <Icons name='heart-outline' size={20} /></Text>
                         <ScrollView horizontal={true} contentContainerStyle={{ marginTop: 7 }} showsHorizontalScrollIndicator={false}>
-                            <TouchableOpacity style={{ padding: 5 }}>
-                                <ImageBackground source={{ uri: 'https://66.media.tumblr.com/22163b02db5d4a89b7cbee0a086b0dcf/tumblr_n5l5si4Fzr1qkv54go1_1280.jpg' }} style={{ width: 100, height: 120, borderRadius: 10, overflow: 'hidden', flexDirection: 'row', justifyContent: 'flex-end' }}>
-                                    <Text style={{ color: 'green', fontWeight: 'bold', marginRight: 10, marginTop: 5, }}>$</Text>
-                                </ImageBackground>
-                            </TouchableOpacity>
-                       </ScrollView>
+                            {this.state.liked.map((x, y) => {
+                                return <TouchableOpacity style={{ padding: 5 }} onPress={() => this.books(x.title)}>
+                                    <ImageBackground source={{ uri: 'http://' + x.cover }} style={{ width: 100, height: 120, borderRadius: 10, overflow: 'hidden', flexDirection: 'row', justifyContent: 'flex-end', }}>
+                                        {x.subscribe ? 
+                                            <Text style={{ color: 'green', fontWeight: 'bold', marginRight: 10, marginTop: 5, }}>$</Text> : <View></View>}
+                                    </ImageBackground>
+                                </TouchableOpacity>
+                            })}
+                        </ScrollView>
                     </View>
                 </View>
             </ScrollView>

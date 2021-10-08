@@ -17,7 +17,7 @@ export default class Navigasi extends Component{
         let Stack = createStackNavigator()
         return(
             <NavigationContainer>
-                <Stack.Navigator >
+                <Stack.Navigator>
                     <Stack.Screen name="Home" component={Home} options={{ headerShown: false }}/>
                     <Stack.Screen name='Login' component={Login} options={{ headerShown: false }}/>
                     <Stack.Screen name='Register' component={Register} options={{ headerShown: false }}/>
@@ -31,6 +31,14 @@ export default class Navigasi extends Component{
                         headerTitle: '',
                         headerStyle: {
                             elevation: 0
+                        }
+                    }}/>
+                    <Stack.Screen name='Overview' component={Overview} options={{
+                        headerTintColor: 'white',
+                        headerTitle: '',
+                        headerStyle: {
+                            elevation: 0,
+                            backgroundColor: 'black'
                         }
                     }}/>
                     <Stack.Screen name='Profile' component={Profile} options={{
