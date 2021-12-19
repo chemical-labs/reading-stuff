@@ -1,5 +1,4 @@
 const app = require('./app');
-const chalk = require('chalk');
 const jsome = require('jsome');
 const color = require('colors');
 const say = require('yosay')
