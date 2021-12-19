@@ -15,6 +15,10 @@
     "type": "git",
     "url": "https://github.com/w3cj/express-api-starter.git"
   },
+  "engines": {
+    "node": "14.16.1",
+    "npm": "7.13.0"
+  },
   "license": "MIT",
   "dependencies": {
     "bcrypt": "*",
