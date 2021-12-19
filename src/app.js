@@ -39,7 +39,8 @@ app.use('/notif', routeNotif)
 
 app.get('/', (req, res) => {
   res.json({
-    message: '🦄🌈✨👋🌎🌍🌏✨🌈🦄'
+      project: 'Literations',
+      version: 'v1.0.0'
   });
 });
 
