@@ -5,11 +5,11 @@ const color = require('colors');
 const say = require('yosay')
 const open = require('open')
 
-console.log(say('Literations'))
+console.log(say('Project 365%'))
 
 jsome({
     'Coder': 'Fajar Firdaus',
-    'IG': '@FajarTheGGman',
+    'IG': '@fajar.psd',
     'Twitter': '@kernel024',
     'Github': 'FajarTheGGman',
 })

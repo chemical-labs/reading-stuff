@@ -25,10 +25,13 @@
     "express": "*",
     "express-fileupload": "*",
     "helmet": "*",
+    "jsome": "^2.5.0",
     "jsonwebtoken": "*",
     "mongoose": "*",
     "morgan": "*",
-    "xendit-node": "*"
+    "open": "^8.4.0",
+    "xendit-node": "*",
+    "yosay": "^2.0.2"
   },
   "devDependencies": {
     "eslint": "^7.28.0",
