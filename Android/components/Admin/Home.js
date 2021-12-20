@@ -930,7 +930,7 @@ class Home extends Component{
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                     <View style={{ marginTop: 25, marginLeft: 20, flexDirection: 'row', alignItems: 'center' }}>
                         <TouchableOpacity onPress={() => this.props.navigation.navigate('Profile')}>
-                            {this.state.profile == 'users.png' ? <Image source={{ uri: konfigurasi.server + 'profile/default.png' }} style={{ width: 50, height: 50, borderRadius: 100, borderWidth: 2, borderColor: 'black' }} /> : <Image source={{ uri: this.state.profile }} style={{ width: 50, height: 50, borderRadius: 100, borderWidth: 2, borderColor: 'black' }} />}
+                            {this.state.profile == 'users.png' ? <Image source={{ uri: konfigurasi.server + 'profile/default.jpg' }} style={{ width: 50, height: 50, borderRadius: 100, borderWidth: 2, borderColor: 'black' }} /> : <Image source={{ uri: this.state.profile }} style={{ width: 50, height: 50, borderRadius: 100, borderWidth: 2, borderColor: 'black' }} />}
                         </TouchableOpacity>
                         <View style={{ flexDirection: 'column', marginLeft: 15 }}>
                             <Text style={{ fontSize: 16, color: 'grey' }}>Wellcome Admin</Text>
