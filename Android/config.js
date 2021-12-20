@@ -1,5 +1,5 @@
 const konfigurasi = {
-    server: "http://192.168.1.10:5000/",
+    server: "https://literations.herokuapp.com/",
     secret: "literations",
     ssl: 'http://'
 }
